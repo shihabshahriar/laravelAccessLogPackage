@@ -20,6 +20,9 @@ Publish vendor files
 ```bash
 $ php artisan vendor:publish --provider="AnnaNovas\AccessLog\AccessLogServiceProvider"
 ```
+
+Next, update config/accesslog.php as per your auth.php
+
 ## Usage
 
 ## Change log
