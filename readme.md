@@ -15,6 +15,11 @@ Via Composer
 $ composer require annanovas/accesslog
 ```
 
+Publish vendor files
+
+```bash
+$ php artisan vendor:publish --provider="AnnaNovas\AccessLog\AccessLogServiceProvider"
+```
 ## Usage
 
 ## Change log
