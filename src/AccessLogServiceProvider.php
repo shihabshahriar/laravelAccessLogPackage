@@ -15,7 +15,7 @@ class AccessLogServiceProvider extends ServiceProvider
     {
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'annanovas');
         $this->loadViewsFrom(__DIR__.'/resources/views', 'accesslog');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
 
         // Publishing is only necessary when using the CLI.
