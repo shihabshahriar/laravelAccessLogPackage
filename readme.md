@@ -27,6 +27,7 @@ Route::get('accessLogs', '\AnnaNovas\AccessLog\Http\controllers\AccessLogControl
 ```
 
 Next, update config/accesslog.php as per your auth.php
+And update your layout in view.
 
 ## Usage
 
