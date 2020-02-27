@@ -24,7 +24,7 @@ $ php artisan vendor:publish --provider="AnnaNovas\AccessLog\AccessLogServicePro
 Add Route 
 ```bash
 Route::get('accessLogs', '\AnnaNovas\AccessLog\Http\controllers\AccessLogController@index')->name('accessLogs');
-```bash
+```
 
 Next, update config/accesslog.php as per your auth.php
 
