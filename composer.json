@@ -1,0 +1,44 @@
+{
+    "name": "annanovas/accesslog",
+    "description": "a package , that will save all request into database",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shahriar Rahman",
+            "email": "shahriar.rahman@annanovas.com",
+            "homepage": "author homepage"
+        }
+    ],
+    "homepage": "https://github.com/annanovas/accesslog",
+    "keywords": ["Laravel", "AccessLog"],
+    "require": {
+        "illuminate/support": "~5|~6",
+        "laravelcollective/html": "5.7.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.0",
+        "mockery/mockery": "^1.1",
+        "orchestra/testbench": "~3|~4",
+        "sempro/phpunit-pretty-print": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AnnaNovas\\AccessLog\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AnnaNovas\\AccessLog\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AnnaNovas\\AccessLog\\AccessLogServiceProvider"
+            ],
+            "aliases": {
+                "AccessLog": "AnnaNovas\\AccessLog\\Facades\\AccessLog"
+            }
+        }
+    }
+}
