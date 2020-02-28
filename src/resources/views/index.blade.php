@@ -4,7 +4,7 @@
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-        <h1>Access Log</h1>
+        <h1>Access Log List</h1>
 
     </section>
 
@@ -15,13 +15,7 @@
             <div class="col-md-12">
                 <div class="box">
 
-                    {{-- <div class="box-header with-border">
-                        <h3 class="box-title">Access Log List</h3>
-                    </div> --}}
-
-                    {{-- @include('include.flashMessage') --}}
-
-                    <!-- /.box-body -->
+                    
                                         
                     {!! Form::open(['method'=>'GET', 'action'=>['\AnnaNovas\AccessLog\Http\controllers\AccessLogController@index']]) !!}
                     <!-- /.box-header -->
@@ -29,24 +23,12 @@
                     <div class="box-body">
                         <div class="row">
                             
-                            {{-- <div class="col-md-2">
-                                <div class="form-group">
-                                    {!! Form::label('user', 'User') !!}
-                                    {!! Form::select('user', $users, request()->get('user'), ['class'=>'form-control', 'style'=>'width:100%;']) !!}
-                                </div>
-                            </div> --}}
-
-                            {{-- <div class="col-md-2">
-                                <div class="form-group">
-                                    {!! Form::label('staff', 'Staff') !!}
-                                    {!! Form::select('staff', $staffs, request()->get('staff'), ['class'=>'form-control', 'style'=>'width:100%;']) !!}
-                                </div>
-                            </div> --}}
+                            
                             
                              <div class="col-md-2">
                                 <div class="form-group">
                                     {!! Form::label('guard', 'Guard') !!}
-                                    {!! Form::select('guard', ['0'=>'All'] + $guards, request()->get('route'), ['class'=>'form-control', 'style'=>'width:100%;']) !!}
+                                    {!! Form::select('guard', ['0'=>'All'] + $guards, request()->get('guard'), ['class'=>'form-control', 'style'=>'width:100%;']) !!}
                                 </div>
                             </div>
                              
@@ -72,13 +54,14 @@
                                 </div>
                             </div>
                             
-                            
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    {!! Form::label('authentication', 'Authentication') !!}
-                                    {!! Form::select('authentication', ['0'=>'All'] + $authentications, request()->get('authentication'), ['class'=>'form-control', 'style'=>'width:100%;']) !!}
+                            @if(Config::get('accesslog')['custom_authentication'])
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        {!! Form::label('custom_authentication', 'Custom Authentication') !!}
+                                        {!! Form::select('custom_authentication', ['0'=>'All'] + $authentications, request()->get('custom_authentication'), ['class'=>'form-control', 'style'=>'width:100%;']) !!}
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                             
                             <div class="col-md-2">
                                 <div class="form-group">
@@ -120,52 +103,36 @@
                             <tr>
                                 <th class="" style="min-width:50px;">ID</th>
                                 <th class="" style="min-width:150px;">User</th>
-                                <th class="" style="min-width:50px;">Route</th>
+                                <th class="" style="min-width:50px;">Guard</th>
                                 <th class="" style="min-width:50px;">Path</th>
                                 <th class="" style="min-width:50px;">Protocol</th>
-                                {{-- <th class="" style="min-width:50px;">Full URL</th> --}}
                                 <th class="" style="min-width:50px;">Method</th>
-                                <th class="" style="min-width:50px;">Authentication</th>
+                                @if(Config::get('accesslog')['custom_authentication'])
+                                    <th class="" style="min-width:50px;">Custom Authentication</th>
+                                @endif
                                 <th class="" style="min-width:50px;">IP</th>
                                 <th class="" style="min-width:50px;">UserAgent</th>
-                                {{-- <th class="" style="min-width:50px;">Requested At</th> --}}
-                                {{-- <th class="" style="min-width:50px;">Created At</th> --}}
-                                {{-- <th class="" style="min-width:50px;">Updated At</th> --}}
+                                <th class="" style="min-width:50px;">Created At</th>
                             </tr>
                             
                             @foreach($accessLogs as $accessLog)
                             <tr>
                                 <td>{{ $accessLog->id }}</td>
-                                {{-- <td>{!! $accessLog->user ? $accessLog->user->name  : '' !!}</td> --}}
                                 <td>
-                                    {!! $accessLog->taggable_type ? $accessLog->taggable_type .'<br>'.$accessLog->taggable->id : '' !!}
+                                    {!! $accessLog->taggable_type ? $accessLog->taggable_type .'<br>'.$accessLog->taggable->name : '' !!}
                                 </td>
-                                {{-- <td>
-                                    @if($accessLog->staff)
-                                    Name: {!! $accessLog->staff->name !!} <br>
-                                    LoginID: {!! $accessLog->staff->loginid !!} <br>
-                                    Shop: {!! $accessLog->staff->shop->shop_name !!} <br>
-                                    @endif
-                                    <br>
-                                </td> --}}
-
-                                {{-- <td>
-                                    @if($accessLog->customer)
-                                        Name: {!! $accessLog->customer->name !!} <br>
-                                        LoginID: {!! $accessLog->customer->clientid !!} <br>
-                                        Shop: {!! $accessLog->customer->shop->shop_name !!} <br>
-                                    @endif
-                                    <br>
-                                </td> --}}
-
-                                {{-- <td>{!! $accessLog->admin ? $accessLog->admin->name : '' !!}</td> --}}
                                 
-                                {{-- <td>{{ $accessLog->route_title }}</td> --}}
+                                <td>{{ $accessLog->accessGuard->title }}</td>
                                 <td title="{{ $accessLog->url }}">{{ $accessLog->path->title }}</td>
                                 <td>{{ $accessLog->protocol->title }}</td>
-                                {{-- <td>{{ $accessLog->fullUrl }}</td> --}}
                                 <td>{{ $accessLog->method->title }}</td>
-                                <td>{{ $accessLog->authentication->title }}</td>
+                                @if(Config::get('accesslog')['custom_authentication'])
+                                    <td>
+                                    @if($accessLog->authentication)
+                                        {{ $accessLog->authentication->title }}
+                                    @endif
+                                    </td>
+                                @endif
                                 <td>{{ $accessLog->ip->title }}</td>
                                 <td>{{ $accessLog->useragent->title }}</td>
                                 
@@ -174,16 +141,7 @@
                                     <br>
                                     {{ $accessLog->created_at->format('Y-m-d H:i:s') }}
                                 </td>
-                                {{-- <td>
-                                    {{ $accessLog->created_at->diffForHumans() }}
-                                    <br>
-                                    {{ $accessLog->created_at->format('Y-m-d H:i:s') }}
-                                </td>
-                                <td>
-                                    {{ $accessLog->updated_at->diffForHumans() }}
-                                    <br>
-                                    {{ $accessLog->updated_at->format('Y-m-d H:i:s') }}
-                                </td> --}}
+                                
                             </tr>
                             @endforeach
                         </table>
@@ -246,7 +204,7 @@
         $("#method").select2({
             placeholder: "Choos an option",
         });
-        $("#authentication").select2({
+        $("#custom_authentication").select2({
             placeholder: "Choos an option",
         });
         $("#ip").select2({

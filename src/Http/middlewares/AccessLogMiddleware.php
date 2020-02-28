@@ -2,10 +2,6 @@
 
 namespace AnnaNovas\AccessLog\Http\middlewares;
 
-// use AnnaNovas\AccessLog\AccessLogFacade;
-// use AnnaNovas\AccessLog\Model\AccessLog;
-// use Carbon\Carbon;
-
 use AnnaNovas\AccessLog\AccessLog;
 use AnnaNovas\AccessLog\Facades\AccessLog as AnnaNovasAccessLog;
 use AnnaNovas\AccessLog\Models\AccessLog as AccessLogModel;
@@ -24,49 +20,11 @@ class AccessLogMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $userIds = [];
-        // if( Auth::guard('admin')->user() ){
-        //     $userIds['request_admin_id'] = Auth::guard('admin')->user()->id;
-        // } 
         
-        
-        // ApiLogProcess::dispatch(
-        //     2,
-        //     $userIds,
-        //     $request->path(),
-        //     $request->getScheme(),
-        //     $request->url(),
-        //     $request->fullUrl(),
-        //     // 'ajkshdgf',
-        //     $request->method(),
-        //     '',
-        //     $request->ip(),
-        //     $request->userAgent(),
-        //     Carbon::now()
-        // )->delay(now()->addSeconds(2));
-        // dd('ll');
-        // dd( auth()->guard()->getName() );
-        // dd(Auth::getDefaultDriver());
-        // dd(Auth::getDefaultUserProvider());
-        // dd(Config::get('auth')['guards']['web']);
-        // dd(Config::get('auth')['providers']['users']['model']);
 
-        // AccessLogFacade::test1();
-        // AccessLog::test1();
-
-
-        // dd(Auth::user());
-
-        // $guard = auth()->guard(); // Retrieve the guard
-        // $sessionName = $guard->getName(); // Retrieve the session name for the guard
-        // // The following extracts the name of the guard by disposing of the first
-        // // and last sections delimited by "_"
-        // $parts = explode("_", $sessionName);
-        // unset($parts[count($parts)-1]);
-        // unset($parts[0]);
-        // $guardName = implode("_",$parts);
-        // dd($guardName);
-
+        if( Config::get('accesslog')['skip_url_paths'] && is_array(Config::get('accesslog')['skip_url_paths']) && in_array($request->path(), Config::get('accesslog')['skip_url_paths']) ){
+            return $next($request);
+        }
         $input = [];
         $input['accesslog_guard_id'] = AnnaNovasAccessLog::getRequestGuardId( Auth::getDefaultDriver() ); 
         $input['accesslog_path_id'] = AnnaNovasAccessLog::getRequestPathId($request->path());
@@ -74,13 +32,19 @@ class AccessLogMiddleware
         $input['url'] = $request->url();
         $input['fullUrl'] = $request->fullUrl();
         $input['accesslog_method_id'] = AnnaNovasAccessLog::getRequestMethodId( $request->method() ); 
-        $input['accesslog_authentication_id'] = AnnaNovasAccessLog::getRequestAuthenticationId( $request->has('authentication') ? $request->get('authentication') : '' );
+
+        if( Config::get('accesslog')['custom_authentication'] ){
+            $input['accesslog_authentication_id'] = AnnaNovasAccessLog::getRequestAuthenticationId( $request->has( Config::get('accesslog')['custom_authentication']) ? $request->get(Config::get('accesslog')['custom_authentication']) : null );
+        }
+        else{
+            $input['accesslog_authentication_id'] = 0;
+        }
         $input['accesslog_useragent_id'] = AnnaNovasAccessLog::getRequestUseragentId( $request->userAgent() ); 
         $input['accesslog_ip_id'] = AnnaNovasAccessLog::getRequestIpId( $request->ip() );
 
         if(Auth::user()){
 
-            $input['taggable_type'] = Config::get('accesslog')['guards'][Auth::getDefaultDriver()]; 
+            $input['taggable_type'] = Config::get('accesslog')['guards'][Auth::getDefaultDriver()]['model']; 
             $input['taggable_id'] = Auth::user()->id; 
 
         }
@@ -90,7 +54,6 @@ class AccessLogMiddleware
         $input['request_header'] = ''; 
         $input['request_data'] = ''; 
 
-        // dd($input);
 
         AccessLogModel::create(
             $input

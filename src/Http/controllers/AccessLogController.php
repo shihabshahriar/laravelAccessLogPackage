@@ -14,8 +14,10 @@ use AnnaNovas\AccessLog\Models\AccesslogPath;
 use AnnaNovas\AccessLog\Models\AccesslogProtocol;
 use AnnaNovas\AccessLog\Models\AccesslogUseragent;
 
-class AccessLogController
+class AccessLogController extends Controller
 {
+    
+
     public function test()
     {
         return 'Hello from the controller';
@@ -41,9 +43,9 @@ class AccessLogController
 
         
 
-        // if ($request->get('route')) {
-        //     $accessLogs->where('route', $request->get('route'));
-        // }
+        if ($request->get('guard')) {
+            $accessLogs->where('accesslog_guard_id', $request->get('guard'));
+        }
         if ($request->get('path')) {
             $accessLogs->where('accesslog_path_id', $request->get('path'));
         }
@@ -53,8 +55,8 @@ class AccessLogController
         if ($request->get('method')) {
             $accessLogs->where('accesslog_method_id', $request->get('method'));
         }
-        if ($request->get('authentication')) {
-            $accessLogs->where('accesslog_authentication_id', $request->get('authentication'));
+        if ($request->get('custom_authentication')) {
+            $accessLogs->where('accesslog_authentication_id', $request->get('custom_authentication'));
         }
         if ($request->get('ip')) {
             $accessLogs->where('accesslog_ip_id', $request->get('ip'));

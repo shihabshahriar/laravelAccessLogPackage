@@ -13,7 +13,6 @@ class AccessLogServiceProvider extends ServiceProvider
      * @var array
      */
     protected $middlewares = [
-        // 'role' => \Laratrust\Middleware\LaratrustRole::class,
         'accesslog' => \AnnaNovas\AccessLog\Http\middlewares\AccessLogMiddleware::class,
     ];
 
@@ -25,7 +24,6 @@ class AccessLogServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'annanovas');
         $this->loadViewsFrom(__DIR__.'/resources/views', 'accesslog');
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
@@ -63,6 +61,7 @@ class AccessLogServiceProvider extends ServiceProvider
     {
 
         $router = $this->app['router'];
+        $middlewareGroups = $router->getMiddlewareGroups();
         
         if (method_exists($router, 'middleware')) {
             $registerMethod = 'middleware';
@@ -74,7 +73,11 @@ class AccessLogServiceProvider extends ServiceProvider
         
         foreach ($this->middlewares as $key => $class) {
             $router->$registerMethod($key, $class);
+            foreach($middlewareGroups as $gkey=>$data){
+                $router->pushMiddlewareToGroup($gkey, $class);
+            }
         }
+
     }
 
 
