@@ -6,6 +6,18 @@ use Illuminate\Support\ServiceProvider;
 
 class AccessLogServiceProvider extends ServiceProvider
 {
+
+    /**
+     * The middlewares to be registered.
+     *
+     * @var array
+     */
+    protected $middlewares = [
+        // 'role' => \Laratrust\Middleware\LaratrustRole::class,
+        'accesslog' => \AnnaNovas\AccessLog\Http\middlewares\AccessLogMiddleware::class,
+    ];
+
+
     /**
      * Perform post-registration booting of services.
      *
@@ -17,6 +29,8 @@ class AccessLogServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/resources/views', 'accesslog');
         $this->loadMigrationsFrom(__DIR__.'/Database/migrations');
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
+
+        $this->registerMiddlewares();
 
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
@@ -38,6 +52,31 @@ class AccessLogServiceProvider extends ServiceProvider
             return new AccessLog;
         });
     }
+
+
+    /**
+     * Register the middlewares automatically.
+     *
+     * @return void
+     */
+    protected function registerMiddlewares()
+    {
+
+        $router = $this->app['router'];
+        
+        if (method_exists($router, 'middleware')) {
+            $registerMethod = 'middleware';
+        } elseif (method_exists($router, 'aliasMiddleware')) {
+            $registerMethod = 'aliasMiddleware';
+        } else {
+            return;
+        }
+        
+        foreach ($this->middlewares as $key => $class) {
+            $router->$registerMethod($key, $class);
+        }
+    }
+
 
     /**
      * Get the services provided by the provider.
