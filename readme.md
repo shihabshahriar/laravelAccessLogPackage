@@ -21,14 +21,9 @@ Publish vendor files
 $ php artisan vendor:publish --provider="AnnaNovas\AccessLog\AccessLogServiceProvider"
 ```
 
-Add Middleware to global
+Chheck config file for more configuration
 ```bash
-protected $middleware = [
-        .....,
-        .....,
-        .....,
-        \AnnaNovas\AccessLog\Http\middlewares\AccessLogMiddleware::class,
-    ];
+config/accesslog.php
 ```
 
 Add Route 
