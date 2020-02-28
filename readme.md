@@ -21,6 +21,16 @@ Publish vendor files
 $ php artisan vendor:publish --provider="AnnaNovas\AccessLog\AccessLogServiceProvider"
 ```
 
+Add Middleware to global
+```bash
+protected $middleware = [
+        .....,
+        .....,
+        .....,
+        \AnnaNovas\AccessLog\Http\middlewares\AccessLogMiddleware::class,
+    ];
+```
+
 Add Route 
 ```bash
 Route::get('accessLogs', '\AnnaNovas\AccessLog\Http\controllers\AccessLogController@index')->name('accessLogs');
