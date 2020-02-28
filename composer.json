@@ -1,6 +1,6 @@
 {
     "name": "annanovas/accesslog",
-    "description": "a package , that will save all request into database",
+    "description": "a package , that will save all request logs into database",
     "license": "MIT",
     "authors": [
         {
