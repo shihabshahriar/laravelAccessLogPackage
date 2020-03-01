@@ -13,6 +13,12 @@ return [
             'model'=>'App\User',
             'title_key'=>'name',
         ],
+        
+        'admin' => [
+            'model'=>'App\Admin',
+            'title_key'=>'name',
+        ],
+        
         'api' => [
             'model'=>'App\User',
             'title_key'=>'name',

@@ -13,6 +13,8 @@ use AnnaNovas\AccessLog\Models\AccesslogMethod;
 use AnnaNovas\AccessLog\Models\AccesslogPath;
 use AnnaNovas\AccessLog\Models\AccesslogProtocol;
 use AnnaNovas\AccessLog\Models\AccesslogUseragent;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 
 class AccessLogController extends Controller
 {
@@ -36,9 +38,33 @@ class AccessLogController extends Controller
 
         $users = [];
         $staffs = [];
+        
         if ($request->get('user')) {
-            $accessLogs->where('accesslog_user_id', $request->get('user'));
-            $users = User::where('id', $request->get('user'))->pluck('phone', 'id')->all();
+            // $accessLogs->where('accesslog_user_id', $request->get('user'));
+            // $users = $model->where('id', $request->get('user'))->pluck('phone', 'id')->all();
+        }
+
+
+        $models = collect(Config::get('accesslog')['guards'])->pluck('model', 'model');
+        $model_fields = array_column(Config::get('accesslog')['guards'], 'title_key', 'model');
+        $modelData = [];
+        foreach ($models as $key => $model) {
+            // $className = $request->get('model');
+            // $class =  new $className;
+            // $modelData[$key] = 
+
+            if ( $request->get( 'accesslogmodel_'.Str::slug($model, '-')) ) {
+                $accessLogs->where('taggable_type', $model)->where('taggable_id', $request->get( 'accesslogmodel_'.Str::slug($model, '-')) );
+
+                // where('taggable_id', $request->get('user'))
+                
+                $class =  new $model;
+                // dd($class);
+                $modelData['accesslogmodel_'.Str::slug($model, '-')] = $class->where('id', $request->get( 'accesslogmodel_'.Str::slug($model, '-')))->pluck($model_fields[$model], 'id')->all();
+            }
+            else{
+                $modelData['accesslogmodel_'.Str::slug($model, '-')] = [];
+            }
         }
 
         
@@ -83,8 +109,38 @@ class AccessLogController extends Controller
         $useragents = AccesslogUseragent::orderBy('title', 'ASC')->pluck('title', 'id')->all();
         $guards = AccesslogGuard::orderBy('title', 'ASC')->pluck('title', 'id')->all();
 
-        return view('accesslog::index', compact('accessLogs', 'users', 'staffs', 'paths', 'protocols', 'methods', 'authentications', 'ips', 'useragents', 'guards'));
         
+
+        return view('accesslog::index', compact('accessLogs', 'users', 'staffs', 'paths', 'protocols', 'methods', 'authentications', 'ips', 'useragents', 'guards', 'models', 'modelData'));
+        
+    }
+
+
+    public function searchUsers(Request $request){
+        // dd($request->all());
+
+        // $class = 'App\User';
+        $class = $request->get('model');
+        $model =  new $class;
+        // dd($model);
+
+
+        $model_fields = array_column(Config::get('accesslog')['guards'], 'title_key', 'model');
+        // dd($model_fields);
+
+        $users = $model->where($model_fields[$class], 'like', '%'.$request->get('search').'%')->pluck($model_fields[$class], 'id')->all();
+
+        $final = [];
+
+        foreach ($users as $key => $user) {
+            $final[] = ['id' => $key, 'text' => $user];
+        }
+
+        $data = [
+            'results' => $final
+        ];
+
+        return response()->json($data);
     }
 
 

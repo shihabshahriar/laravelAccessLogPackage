@@ -2,6 +2,7 @@
 
 namespace AnnaNovas\AccessLog;
 
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 
 class AccessLogServiceProvider extends ServiceProvider
@@ -29,6 +30,7 @@ class AccessLogServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/routes/web.php');
 
         $this->registerMiddlewares();
+        AliasLoader::getInstance(['Str'=>'\Illuminate\Support\Str']);
 
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {

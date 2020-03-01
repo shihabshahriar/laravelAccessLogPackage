@@ -23,6 +23,14 @@
                     <div class="box-body">
                         <div class="row">
                             
+                            @foreach ($models as $model)
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        {!! Form::label( 'accesslogmodel_'.Str::slug($model, '-'), $model) !!}
+                                        {!! Form::select( 'accesslogmodel_'.Str::slug($model, '-'), $modelData['accesslogmodel_'.Str::slug($model, '-')], request()->get('accesslogmodel_'.Str::slug($model, '-')), ['data-model'=>$model, 'class'=>'form-control ajax_data', 'style'=>'width:100%;']) !!}
+                                    </div>
+                                </div>
+                            @endforeach
                             
                             
                              <div class="col-md-2">
@@ -215,7 +223,25 @@
         });
         
         
-
+        $(".ajax_data").select2({
+            allowClear: true,
+            placeholder: "All",
+            minimumInputLength:2,
+            ajax: {
+                url: '{{ route('accesslog.access-logs-user-search') }}',
+                data: function (params) {
+                    // alert( $(this).attr("data-model") );
+                    var query = {
+                        search: params.term,
+                        page: params.page || 1,
+                        model: $(this).attr("data-model"),
+                        "_token":"{{ csrf_token() }}"
+                    }
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                }
+            }
+        });
 
         
         
