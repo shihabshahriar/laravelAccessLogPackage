@@ -111,7 +111,7 @@ class AccessLogController extends Controller
 
         
 
-        return view('accesslog::index', compact('accessLogs', 'users', 'staffs', 'paths', 'protocols', 'methods', 'authentications', 'ips', 'useragents', 'guards', 'models', 'modelData'));
+        return view('accesslog::index', compact('accessLogs', 'users', 'staffs', 'paths', 'protocols', 'methods', 'authentications', 'ips', 'useragents', 'guards', 'models', 'modelData', 'model_fields'));
         
     }
 

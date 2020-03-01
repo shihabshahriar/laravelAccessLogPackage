@@ -127,7 +127,7 @@
                             <tr>
                                 <td>{{ $accessLog->id }}</td>
                                 <td>
-                                    {!! $accessLog->taggable_type ? $accessLog->taggable_type .'<br>'.$accessLog->taggable->name : '' !!}
+                                    {!! $accessLog->taggable_type ? $accessLog->taggable_type .'<br>'.$accessLog->taggable->{$model_fields[$accessLog->taggable_type]} : '' !!}
                                 </td>
                                 
                                 <td>{{ $accessLog->accessGuard->title }}</td>
