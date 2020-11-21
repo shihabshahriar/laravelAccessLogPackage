@@ -15,11 +15,21 @@ Via Composer
 $ composer require annanovas/accesslog dev-master
 ```
 
+run Migration
+
+```bash
+$ php artisan migrate
+```
+
+
+
 Publish vendor files
 
 ```bash
 $ php artisan vendor:publish --provider="AnnaNovas\AccessLog\AccessLogServiceProvider"
 ```
+
+
 
 Chheck config file for more configuration
 ```bash
