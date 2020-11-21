@@ -42,7 +42,7 @@ class AccessLogMiddleware
         $input['accesslog_useragent_id'] = AnnaNovasAccessLog::getRequestUseragentId( $request->userAgent() ); 
         $input['accesslog_ip_id'] = AnnaNovasAccessLog::getRequestIpId( $request->ip() );
 
-        if(Auth::user()){
+        if( Auth::user() && isset(Config::get('accesslog')['guards'][Auth::getDefaultDriver()]) ){
 
             $input['taggable_type'] = Config::get('accesslog')['guards'][Auth::getDefaultDriver()]['model']; 
             $input['taggable_id'] = Auth::user()->id; 
